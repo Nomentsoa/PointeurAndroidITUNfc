@@ -2,6 +2,9 @@ package mg.itu.lazanomentsoa.pointagenfcitu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -21,13 +24,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import mg.itu.lazanomentsoa.pointagenfcitu.adapter.CustomAdapterSpinnerTache;
+import mg.itu.lazanomentsoa.pointagenfcitu.commun.AbsctractBaseActivity;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
+import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
+
+public class MainActivity extends AbsctractBaseActivity {
 
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
@@ -45,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     Button btnWrite;
 
     LinearLayout llImageAccueil, llInformations;
+    PointageViewModel pointageViewModel;
+
+    Spinner spinnerTache;
+    private List<Tache> listTaches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         // pour modifier la coleur du text et le fond en blanc du status bar
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.white));// set status background white
+
+        // recuperation du view model pointageViewModel
+        pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);
+        pointageViewModel.init();
+
+        //spinner
+        spinnerTache = (Spinner)findViewById(R.id.spiner_tache);
 
         context = this;
 
@@ -213,10 +234,26 @@ public class MainActivity extends AppCompatActivity {
         readFromIntent(intent);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-           Log.i("tag","adresse mac => "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
-           llImageAccueil.setVisibility(View.GONE);
-           llInformations.setVisibility(View.VISIBLE);
-           tvSerialNumber.setText("Numero de serie du tag NFC: "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+
+            showLoading(false);
+            pointageViewModel.getTaches().observe(this, new Observer<List<Tache>>() {
+                @Override
+                public void onChanged(List<Tache> taches) {
+                    if(taches !=  null){
+                        Log.i("taches succes"," listes des tâches => "+taches);
+                        dismissLoading();
+                        llImageAccueil.setVisibility(View.GONE);
+                        llInformations.setVisibility(View.VISIBLE);
+                        tvSerialNumber.setText("Numero de serie du tag NFC: "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+                        Log.i("tag","adresse mac => "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+                        CustomAdapterSpinnerTache customAdapterSpinnerTache = new CustomAdapterSpinnerTache(taches);
+                        spinnerTache.setAdapter(customAdapterSpinnerTache);
+
+                    }else{
+                        Log.i("taches null"," taches => "+ taches);
+                    }
+                }
+            });
         }
     }
 

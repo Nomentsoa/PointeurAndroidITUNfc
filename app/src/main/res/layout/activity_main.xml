@@ -14,7 +14,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="250dp"
@@ -34,39 +35,76 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ecirvez quelque chose: ">
-        </TextView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/adresse_mac"
+            android:textSize="@dimen/size_label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            />
+        <TextView
+            android:id="@+id/tv_serial_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size_label"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/selectionner_tache"
+            android:textSize="@dimen/size_label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            />
+        <Spinner
+            android:id="@+id/spiner_tache"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inserrer une donnée dans la carte:"
+            android:textSize="@dimen/size_label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            />
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20sp" >
+            android:layout_marginTop="2sp"
+            android:visibility="visible">
 
             <EditText
                 android:id="@+id/edit_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="message" />
+                android:hint="message"
+                />
             <Button
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ecrire" />
+                />
         </LinearLayout>
         <TextView
-            android:id="@+id/nfc_contents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="La valeur dans la carte:"
+            android:textSize="@dimen/size_label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             />
-
         <TextView
-            android:id="@+id/tv_serial_number"
+            android:id="@+id/nfc_contents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />

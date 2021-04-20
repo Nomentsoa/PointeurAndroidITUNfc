@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="size_scan_text">20sp</dimen>
+    <dimen name="size_label">15sp</dimen>
 </resources>
