@@ -1,6 +1,7 @@
 package mg.itu.lazanomentsoa.pointagenfcitu;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,15 +44,25 @@ public class MainActivity extends AppCompatActivity {
     EditText message;
     Button btnWrite;
 
+    LinearLayout llImageAccueil, llInformations;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // pour modifier la coleur du text et le fond en blanc du status bar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
+        getWindow().setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.white));// set status background white
+
         context = this;
 
         tvNFCContent = (TextView) findViewById(R.id.nfc_contents);
         tvSerialNumber = (TextView) findViewById(R.id.tv_serial_number);
+
+        llImageAccueil = (LinearLayout)findViewById(R.id.ll_image_acceuil);
+        llInformations = (LinearLayout)findViewById(R.id.ll_informations);
+
         message = (EditText) findViewById(R.id.edit_message);
         btnWrite = (Button) findViewById(R.id.button);
         //myTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -202,6 +214,8 @@ public class MainActivity extends AppCompatActivity {
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
            Log.i("tag","adresse mac => "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+           llImageAccueil.setVisibility(View.GONE);
+           llInformations.setVisibility(View.VISIBLE);
            tvSerialNumber.setText("Numero de serie du tag NFC: "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
         }
     }
