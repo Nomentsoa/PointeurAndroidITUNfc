@@ -44,10 +44,12 @@ public class MainActivity extends AbsctractBaseActivity {
     Button btnWrite;
 
     LinearLayout llImageAccueil, llInformations;
-    PointageViewModel pointageViewModel;
+
 
     Spinner spinnerTache;
     private List<Tache> listTaches;
+
+    public static String  employeScanne = "employeScanne";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +57,6 @@ public class MainActivity extends AbsctractBaseActivity {
         setContentView(R.layout.activity_main);
 
 
-        // recuperation du view model pointageViewModel
-        pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);
-        pointageViewModel.init();
 
         //spinner
         spinnerTache = (Spinner)findViewById(R.id.spiner_tache);
@@ -228,33 +227,30 @@ public class MainActivity extends AbsctractBaseActivity {
                 public void onChanged(Employe employe) {
                     if(employe != null){
                         Log.i(TAG, "employe => "+employe.getNom());
+                        Intent intent = new Intent(MainActivity.this, BienvenuActivity.class);
+                        intent.putExtra(employeScanne,employe);
+                        startActivity(intent);
                     }else{
                         Log.i(TAG," employe => null");
                     }
                     dismissLoading();
                 }
             });
-            /*pointageViewModel.getTaches().observe(this, new Observer<List<Tache>>() {
-                @Override
-                public void onChanged(List<Tache> taches) {
-                    if(taches !=  null){
-                        Log.i("taches succes"," listes des tâches => "+taches);
-                        dismissLoading();
-                        llImageAccueil.setVisibility(View.GONE);
-                        llInformations.setVisibility(View.VISIBLE);
-                        tvSerialNumber.setText("Numero de serie du tag NFC: "+);
-                        Log.i("tag","adresse mac => "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
-                        CustomAdapterSpinnerTache customAdapterSpinnerTache = new CustomAdapterSpinnerTache(taches);
-                        spinnerTache.setAdapter(customAdapterSpinnerTache);
 
-                    }else{
-                        Log.i("taches null"," taches => "+ taches);
-                    }
-                }
-            });*/
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        WriteModeOn();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        WriteModeOff();
+    }
 
 
 

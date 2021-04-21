@@ -10,6 +10,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
+
+import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
 
 public abstract class AbsctractBaseActivity extends AppCompatActivity {
     public static final String ERROR_DETECTED = "No NFC tag detected!";
@@ -26,10 +29,17 @@ public abstract class AbsctractBaseActivity extends AppCompatActivity {
     protected LoadingDialogFragment loadingDialogFragment;
     protected FragmentManager fragmentManager;
 
+    public PointageViewModel pointageViewModel;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = this.getSupportFragmentManager();
+
+        // recuperation du view model pointageViewModel
+        pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);
+        pointageViewModel.init();
+
     }
 
 
@@ -83,12 +93,10 @@ public abstract class AbsctractBaseActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        WriteModeOff();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        WriteModeOn();
     }
 }
