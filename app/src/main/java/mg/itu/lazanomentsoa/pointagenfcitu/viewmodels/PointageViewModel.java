@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.api.PointageRepository;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 
 public class PointageViewModel extends AndroidViewModel {
@@ -25,5 +26,10 @@ public class PointageViewModel extends AndroidViewModel {
 
     public LiveData<List<Tache>> getTaches(){
         return listeTaches;
+    }
+
+    // employe
+    public LiveData<Employe> getEmployeByMacNfc(String macNfc){
+        return pointageRepository.getEmployeByMacNfc(macNfc);
     }
 }

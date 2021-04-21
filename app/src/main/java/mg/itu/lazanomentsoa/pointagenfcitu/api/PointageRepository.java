@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -50,5 +51,25 @@ public class PointageRepository {
                 });
 
         return  listTaches;
+    }
+
+
+    // employe
+    public LiveData<Employe> getEmployeByMacNfc(String macNfc){
+        MutableLiveData<Employe> employeMutableLiveData = new MutableLiveData<>();
+        pointageService.getEmployeByMacNfc(macNfc)
+                .enqueue(new Callback<Employe>() {
+                    @Override
+                    public void onResponse(Call<Employe> call, Response<Employe> response) {
+                        employeMutableLiveData.setValue(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Employe> call, Throwable t) {
+                        employeMutableLiveData.setValue(null);
+                    }
+                });
+
+        return employeMutableLiveData;
     }
 }

@@ -1,13 +1,6 @@
-package mg.itu.lazanomentsoa.pointagenfcitu;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+package mg.itu.lazanomentsoa.pointagenfcitu.ui;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.FormatException;
@@ -28,26 +21,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import mg.itu.lazanomentsoa.pointagenfcitu.adapter.CustomAdapterSpinnerTache;
+import mg.itu.lazanomentsoa.pointagenfcitu.R;
 import mg.itu.lazanomentsoa.pointagenfcitu.commun.AbsctractBaseActivity;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
 
 public class MainActivity extends AbsctractBaseActivity {
 
-    public static final String ERROR_DETECTED = "No NFC tag detected!";
-    public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
-    public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
-    NfcAdapter nfcAdapter;
-    PendingIntent pendingIntent;
-    IntentFilter writeTagFilters[];
-    boolean writeMode;
-    Tag myTag;
-    Context context;
+    private String TAG = "MainActivity";
 
     TextView tvNFCContent;
     TextView tvSerialNumber;
@@ -65,9 +54,6 @@ public class MainActivity extends AbsctractBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // pour modifier la coleur du text et le fond en blanc du status bar
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
-        getWindow().setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.white));// set status background white
 
         // recuperation du view model pointageViewModel
         pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);
@@ -236,7 +222,19 @@ public class MainActivity extends AbsctractBaseActivity {
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             showLoading(false);
-            pointageViewModel.getTaches().observe(this, new Observer<List<Tache>>() {
+            String macNfc = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+            pointageViewModel.getEmployeByMacNfc(macNfc).observe(this, new Observer<Employe>() {
+                @Override
+                public void onChanged(Employe employe) {
+                    if(employe != null){
+                        Log.i(TAG, "employe => "+employe.getNom());
+                    }else{
+                        Log.i(TAG," employe => null");
+                    }
+                    dismissLoading();
+                }
+            });
+            /*pointageViewModel.getTaches().observe(this, new Observer<List<Tache>>() {
                 @Override
                 public void onChanged(List<Tache> taches) {
                     if(taches !=  null){
@@ -244,7 +242,7 @@ public class MainActivity extends AbsctractBaseActivity {
                         dismissLoading();
                         llImageAccueil.setVisibility(View.GONE);
                         llInformations.setVisibility(View.VISIBLE);
-                        tvSerialNumber.setText("Numero de serie du tag NFC: "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+                        tvSerialNumber.setText("Numero de serie du tag NFC: "+);
                         Log.i("tag","adresse mac => "+ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
                         CustomAdapterSpinnerTache customAdapterSpinnerTache = new CustomAdapterSpinnerTache(taches);
                         spinnerTache.setAdapter(customAdapterSpinnerTache);
@@ -253,56 +251,11 @@ public class MainActivity extends AbsctractBaseActivity {
                         Log.i("taches null"," taches => "+ taches);
                     }
                 }
-            });
+            });*/
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        WriteModeOff();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        WriteModeOn();
-    }
 
-    /**
-     * activier l'ecriture
-     */
-    private void WriteModeOn() {
-        writeMode = true;
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
-    }
 
-    /**
-     * desactiver l'ecriture
-     */
-    private void WriteModeOff() {
-        writeMode = false;
-        nfcAdapter.disableForegroundDispatch(this);
-    }
-
-    /**
-     * C'est pour la récupération du numero de serie de la carte
-     * @param inarray
-     * @return
-     */
-    private String ByteArrayToHexString(byte [] inarray) {
-        int i, j, in;
-        String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        String out= "";
-
-        for(j = 0 ; j < inarray.length ; ++j)
-        {
-            in = (int) inarray[j] & 0xff;
-            i = (in >> 4) & 0x0f;
-            out += hex[i];
-            i = in & 0x0f;
-            out += hex[i];
-        }
-        return out;
-    }
 }
