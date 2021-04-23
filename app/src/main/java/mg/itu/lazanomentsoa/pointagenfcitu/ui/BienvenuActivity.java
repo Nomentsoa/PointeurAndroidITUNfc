@@ -6,11 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.text.DateFormat;
@@ -28,10 +30,12 @@ public class BienvenuActivity extends AbsctractBaseActivity {
     private Employe employeScanned;
     private TextView tvInformationEmployeScanned, tvPostEmployeScanned, tvHeurePointage;
     private Spinner spinnerTache;
+    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bienvenu);
+        this.context = this;
         setToolBar();
         employeScanned = (Employe)getIntent().getSerializableExtra(MainActivity.employeScanne);
 
@@ -63,12 +67,12 @@ public class BienvenuActivity extends AbsctractBaseActivity {
                 @Override
                 public void onChanged(List<Tache> taches) {
                     if(taches !=  null){
-                        dismissLoading();
                         CustomAdapterSpinnerTache customAdapterSpinnerTache = new CustomAdapterSpinnerTache(taches);
                         spinnerTache.setAdapter(customAdapterSpinnerTache);
                     }else{
-
+                        Toast.makeText(context, "Erreur sur la récupération des tâches.", Toast.LENGTH_LONG).show();
                     }
+                    dismissLoading();
                 }
             });
 
@@ -92,5 +96,12 @@ public class BienvenuActivity extends AbsctractBaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.startActivity(new Intent(BienvenuActivity.this, MainActivity.class));
+        this.finish();
     }
 }

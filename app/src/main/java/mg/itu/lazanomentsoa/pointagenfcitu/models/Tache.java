@@ -12,6 +12,15 @@ public class Tache {
     @Expose
     private String nom;
 
+    private String etatRequet;
+
+    public Tache() {
+    }
+
+    public Tache(String etatRequet) {
+        this.etatRequet = etatRequet;
+    }
+
     public String getId() {
         return id;
     }
@@ -26,5 +35,13 @@ public class Tache {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public String getEtatRequet() {
+        return etatRequet;
+    }
+
+    public void setEtatRequet(String etatRequet) {
+        this.etatRequet = etatRequet;
     }
 }

@@ -33,6 +33,23 @@ public class Employe implements Serializable {
     @Expose
     private int penalite;
 
+    private String etatRequet;
+
+    public Employe() {
+    }
+
+    public Employe(String etatRequet) {
+        this.etatRequet = etatRequet;
+    }
+
+    public String getEtatRequet() {
+        return etatRequet;
+    }
+
+    public void setEtatRequet(String etatRequet) {
+        this.etatRequet = etatRequet;
+    }
+
     public String getId() {
         return id;
     }

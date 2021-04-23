@@ -10,7 +10,9 @@ import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.api.PointageRepository;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.ReturSucces;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.UpdateMacEmploye;
 
 public class PointageViewModel extends AndroidViewModel {
     private PointageRepository pointageRepository;
@@ -31,5 +33,13 @@ public class PointageViewModel extends AndroidViewModel {
     // employe
     public LiveData<Employe> getEmployeByMacNfc(String macNfc){
         return pointageRepository.getEmployeByMacNfc(macNfc);
+    }
+
+    public LiveData<List<Employe>> getEmployesNullMacNfc(){
+        return pointageRepository.getEmployesNulMacNfc();
+    }
+
+    public LiveData<ReturSucces> updateMacEmployeById(String id, UpdateMacEmploye updateMacEmploye){
+        return pointageRepository.updateMacEmployeById(id, updateMacEmploye);
     }
 }

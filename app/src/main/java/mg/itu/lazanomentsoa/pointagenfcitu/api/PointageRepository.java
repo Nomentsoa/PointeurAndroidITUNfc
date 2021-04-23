@@ -1,12 +1,17 @@
 package mg.itu.lazanomentsoa.pointagenfcitu.api;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import mg.itu.lazanomentsoa.pointagenfcitu.commun.Constante;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.ReturSucces;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.UpdateMacEmploye;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -16,6 +21,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PointageRepository {
+    private String TAG ="PointageRepository";
     private static final String NFC_POINTAGE_URL = "https://nfc-api-gp8.herokuapp.com/api/";
 
     private PointageService pointageService;
@@ -61,15 +67,56 @@ public class PointageRepository {
                 .enqueue(new Callback<Employe>() {
                     @Override
                     public void onResponse(Call<Employe> call, Response<Employe> response) {
-                        employeMutableLiveData.setValue(response.body());
+                        if(response.body() != null){
+                            Employe employe = response.body();
+                            employe.setEtatRequet(Constante.ETAT_SUCCES_REQUET);
+                            employeMutableLiveData.setValue(employe);
+                        }else{
+                            employeMutableLiveData.setValue(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<Employe> call, Throwable t) {
-                        employeMutableLiveData.setValue(null);
+                        employeMutableLiveData.setValue(new Employe(Constante.ETAT_ERREUR_REQUET));
                     }
                 });
 
         return employeMutableLiveData;
+    }
+
+    public LiveData<List<Employe>> getEmployesNulMacNfc(){
+        MutableLiveData<List<Employe>> listMutableLiveData = new MutableLiveData<>();
+        pointageService.getEmployesNullMacNfc().enqueue(new Callback<List<Employe>>() {
+            @Override
+            public void onResponse(Call<List<Employe>> call, Response<List<Employe>> response) {
+                listMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Employe>> call, Throwable t) {
+                listMutableLiveData.setValue(null);
+            }
+        });
+
+        return  listMutableLiveData;
+    }
+
+    public LiveData<ReturSucces> updateMacEmployeById(String id, UpdateMacEmploye updateMacEmploye){
+        MutableLiveData<ReturSucces> returSuccesMutableLiveData = new MutableLiveData<>();
+        pointageService.setMadEmployeById(id, updateMacEmploye).enqueue(new Callback<ReturSucces>() {
+            @Override
+            public void onResponse(Call<ReturSucces> call, Response<ReturSucces> response) {
+                returSuccesMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ReturSucces> call, Throwable t) {
+                returSuccesMutableLiveData.setValue(null);
+                Log.i(TAG, "erreur => "+ t.getMessage());
+            }
+        });
+
+        return returSuccesMutableLiveData;
     }
 }

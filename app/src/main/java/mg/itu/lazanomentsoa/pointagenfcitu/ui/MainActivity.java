@@ -30,6 +30,7 @@ import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.R;
 import mg.itu.lazanomentsoa.pointagenfcitu.commun.AbsctractBaseActivity;
+import mg.itu.lazanomentsoa.pointagenfcitu.commun.Constante;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
@@ -37,7 +38,7 @@ import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
 public class MainActivity extends AbsctractBaseActivity {
 
     private String TAG = "MainActivity";
-
+    public static String ADDRESS_MAC_NFC = "addressMacNFC";
     TextView tvNFCContent;
     TextView tvSerialNumber;
     EditText message;
@@ -226,12 +227,21 @@ public class MainActivity extends AbsctractBaseActivity {
                 @Override
                 public void onChanged(Employe employe) {
                     if(employe != null){
-                        Log.i(TAG, "employe => "+employe.getNom());
-                        Intent intent = new Intent(MainActivity.this, BienvenuActivity.class);
-                        intent.putExtra(employeScanne,employe);
-                        startActivity(intent);
+                        if(!employe.getEtatRequet().equals(Constante.ETAT_ERREUR_REQUET)){
+                            Log.i(TAG, "employe => "+employe.getNom());
+                            Intent intent = new Intent(MainActivity.this, BienvenuActivity.class);
+                            intent.putExtra(employeScanne,employe);
+                            finish();
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Veuillez refaire le scanne de votre tag", Toast.LENGTH_LONG).show();
+                        }
+
                     }else{
-                        Log.i(TAG," employe => null");
+                        Intent intent = new Intent(MainActivity.this, AffectationNfcToEmployeActivity.class);
+                        intent.putExtra(ADDRESS_MAC_NFC, macNfc);
+                        finish();
+                        startActivity(intent);
                     }
                     dismissLoading();
                 }
