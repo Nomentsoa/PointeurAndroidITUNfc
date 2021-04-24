@@ -2,10 +2,12 @@ package mg.itu.lazanomentsoa.pointagenfcitu.commun;
 
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public abstract class AbsctractBaseActivity extends AppCompatActivity {
     public boolean writeMode;
     public Tag myTag;
     public Context context;
+    public IntentFilter tagDetected;
 
 
     protected LoadingDialogFragment loadingDialogFragment;
@@ -36,6 +39,17 @@ public abstract class AbsctractBaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         fragmentManager = this.getSupportFragmentManager();
 
+        // pour nfc
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter == null) {
+            // Stop here, we definitely need NFC
+            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
+        writeTagFilters = new IntentFilter[]{tagDetected};
 
         // recuperation du view model pointageViewModel
         pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);

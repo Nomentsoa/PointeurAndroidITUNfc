@@ -66,20 +66,6 @@ public class BienvenuActivity extends AbsctractBaseActivity {
         employeScanned = (Employe)getIntent().getSerializableExtra(MainActivity.employeScanne);
 
 
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (nfcAdapter == null) {
-            // Stop here, we definitely need NFC
-            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
-            finish();
-        }
-
-
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
-        writeTagFilters = new IntentFilter[]{tagDetected};
-
-
         tvInformationEmployeScanned = (TextView)findViewById(R.id.tv_information_employee_scanned);
         tvPostEmployeScanned = (TextView)findViewById(R.id.tv_poste_employee);
         tvHeurePointage = (TextView)findViewById(R.id.tv_heure_pointage);
