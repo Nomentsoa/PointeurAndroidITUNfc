@@ -136,6 +136,7 @@ public class BienvenuActivity extends AbsctractBaseActivity {
                     } else {
                         write(idJournee, myTag);
                         Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(BienvenuActivity.this, MainActivity.class));
                     }
                 } catch (IOException e) {
                     Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();

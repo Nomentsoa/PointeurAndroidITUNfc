@@ -17,9 +17,9 @@ import androidx.lifecycle.ViewModelProviders;
 import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
 
 public abstract class AbsctractBaseActivity extends AppCompatActivity {
-    public static final String ERROR_DETECTED = "No NFC tag detected!";
-    public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
-    public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
+    public static final String ERROR_DETECTED = "Pas de tag NFC detécté!";
+    public static final String WRITE_SUCCESS = "L'ecriture est un succès";
+    public static final String WRITE_ERROR = "Erreur sur l'ecriture, la carte est elle proche du téléphone?";
     public NfcAdapter nfcAdapter;
     public PendingIntent pendingIntent;
     public IntentFilter writeTagFilters[];
