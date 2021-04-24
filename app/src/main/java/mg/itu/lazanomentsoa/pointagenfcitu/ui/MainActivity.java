@@ -76,20 +76,7 @@ public class MainActivity extends AbsctractBaseActivity {
         btnWrite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    if (myTag == null) {
-                        Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
-                    } else {
-                        write(message.getText().toString(), myTag);
-                        Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                } catch (FormatException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
+
             }
         });
 
@@ -146,71 +133,14 @@ public class MainActivity extends AbsctractBaseActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
 
+        Log.i(TAG," valeur dans la tag => "+text);
         tvNFCContent.setText("NFC Content: " + text);
     }
 
 
-    /**
-     * Ecriture dans le NFC TAG
-     * @param text
-     * @param tag
-     * @throws IOException
-     * @throws FormatException
-     */
-    private void write(String text, Tag tag) throws IOException, FormatException {
-        NdefRecord[] records = {createRecord(text)};
-        NdefMessage message = new NdefMessage(records);
-        // Get an instance of Ndef for the tag.
-        Ndef ndef = Ndef.get(tag);
-        Log.i("tag", " tag => " + tag + "ndef => " + ndef);
 
 
-        if (ndef != null) {
-            NdefMessage ndefMesg = ndef.getCachedNdefMessage();
-            if (ndefMesg != null) {
-                // Enable I/O
-                ndef.connect();
-                // Write the message
-                ndef.writeNdefMessage(message);
-                // Close the connection
-                ndef.close();
-            }
-        } else {
-            NdefFormatable ndefFormatable = NdefFormatable.get(tag);
-            if (ndefFormatable != null) {
-                // initialize tag with new NDEF message
-                try {
-                    ndefFormatable.connect();
-                    ndefFormatable.format(message);
-                } finally {
-                    try {
-                        ndefFormatable.close();
-                    } catch (Exception e) {
-                    }
-                }
-            }
-        }
-    }
 
-    private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
-        String lang = "en";
-        byte[] textBytes = text.getBytes();
-        byte[] langBytes = lang.getBytes("US-ASCII");
-        int langLength = langBytes.length;
-        int textLength = textBytes.length;
-        byte[] payload = new byte[1 + langLength + textLength];
-
-        // set status byte (see NDEF spec for actual bits)
-        payload[1] = (byte) langLength;
-
-        // copy langbytes and textbytes into payload
-        System.arraycopy(langBytes, 0, payload, 1, langLength);
-        System.arraycopy(textBytes, 0, payload, 1 + langLength, textLength);
-
-        NdefRecord recordNFC = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload);
-
-        return recordNFC;
-    }
 
 
     @Override

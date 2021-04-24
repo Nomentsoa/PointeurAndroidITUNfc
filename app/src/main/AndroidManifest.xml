@@ -20,7 +20,11 @@
         <activity android:name=".ui.AffectationNfcToEmployeActivity"></activity>
         <activity
             android:name=".ui.BienvenuActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
         <activity
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait">

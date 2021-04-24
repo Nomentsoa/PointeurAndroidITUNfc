@@ -36,6 +36,7 @@ public abstract class AbsctractBaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         fragmentManager = this.getSupportFragmentManager();
 
+
         // recuperation du view model pointageViewModel
         pointageViewModel = ViewModelProviders.of(this).get(PointageViewModel.class);
         pointageViewModel.init();

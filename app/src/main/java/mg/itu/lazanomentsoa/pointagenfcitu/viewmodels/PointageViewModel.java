@@ -30,6 +30,11 @@ public class PointageViewModel extends AndroidViewModel {
         return listeTaches;
     }
 
+    // journée
+    public LiveData<ReturSucces> addJourneeByMacAndTache(String idTache, UpdateMacEmploye updateMacEmploye){
+        return pointageRepository.addJourneeByMadAndTache(idTache, updateMacEmploye);
+    }
+
     // employe
     public LiveData<Employe> getEmployeByMacNfc(String macNfc){
         return pointageRepository.getEmployeByMacNfc(macNfc);

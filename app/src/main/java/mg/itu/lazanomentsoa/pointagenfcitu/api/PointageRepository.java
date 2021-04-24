@@ -59,6 +59,25 @@ public class PointageRepository {
         return  listTaches;
     }
 
+    // journée
+    public LiveData<ReturSucces> addJourneeByMadAndTache(String idTache, UpdateMacEmploye updateMacEmploye){
+        MutableLiveData<ReturSucces> returSuccesMutableLiveData = new MutableLiveData<>();
+        pointageService.addJourneeByMacAndTache(idTache, updateMacEmploye)
+                .enqueue(new Callback<ReturSucces>() {
+                    @Override
+                    public void onResponse(Call<ReturSucces> call, Response<ReturSucces> response) {
+                        returSuccesMutableLiveData.setValue(response.body() );
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReturSucces> call, Throwable t) {
+                        returSuccesMutableLiveData.setValue(null);
+                    }
+                });
+
+        return returSuccesMutableLiveData;
+    }
+
 
     // employe
     public LiveData<Employe> getEmployeByMacNfc(String macNfc){

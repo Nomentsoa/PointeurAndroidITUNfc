@@ -136,6 +136,7 @@
                 />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_valider_tache"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:text="Valider la tâche"
@@ -146,6 +147,24 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_mettre_tache_dans_carte"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:text="Mettre la jourée dans la carte"
+        app:icon="@drawable/ic_baseline_nfc_24"
+        app:iconGravity="textStart"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:cornerRadius="25dp"
+        app:backgroundTint="@color/black"
+        android:textSize="15sp"
+        android:visibility="gone"/>
 
 
 </LinearLayout>
