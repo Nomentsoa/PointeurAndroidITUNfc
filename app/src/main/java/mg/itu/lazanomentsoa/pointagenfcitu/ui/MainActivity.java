@@ -24,6 +24,8 @@ import android.widget.Toast;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -32,6 +34,7 @@ import mg.itu.lazanomentsoa.pointagenfcitu.R;
 import mg.itu.lazanomentsoa.pointagenfcitu.commun.AbsctractBaseActivity;
 import mg.itu.lazanomentsoa.pointagenfcitu.commun.Constante;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Journee;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.viewmodels.PointageViewModel;
 
@@ -39,6 +42,7 @@ public class MainActivity extends AbsctractBaseActivity {
 
     private String TAG = "MainActivity";
     public static String ADDRESS_MAC_NFC = "addressMacNFC";
+    public static String JOURNEEE_IN_CARTE = "journeeInCarte";
     TextView tvNFCContent;
     TextView tvSerialNumber;
     EditText message;
@@ -49,6 +53,8 @@ public class MainActivity extends AbsctractBaseActivity {
 
     Spinner spinnerTache;
     private List<Tache> listTaches;
+
+    String idJournee = null;
 
     public static String  employeScanne = "employeScanne";
 
@@ -118,18 +124,13 @@ public class MainActivity extends AbsctractBaseActivity {
         try {
             // Get the Text
             text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+            idJournee = text.substring(2,text.length());
         } catch (UnsupportedEncodingException e) {
-            Log.e("UnsupportedEncoding", e.toString());
+            Log.i(TAG," valeur dans la tag null");
         }
 
-        Log.i(TAG," valeur dans la tag => "+text);
         tvNFCContent.setText("NFC Content: " + text);
     }
-
-
-
-
-
 
 
     @Override
@@ -139,33 +140,32 @@ public class MainActivity extends AbsctractBaseActivity {
         readFromIntent(intent);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-            showLoading(false);
             String macNfc = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-            pointageViewModel.getEmployeByMacNfc(macNfc).observe(this, new Observer<Employe>() {
-                @Override
-                public void onChanged(Employe employe) {
-                    if(employe != null){
-                        if(!employe.getEtatRequet().equals(Constante.ETAT_ERREUR_REQUET)){
-                            Log.i(TAG, "employe => "+employe.getNom());
-                            Intent intent = new Intent(MainActivity.this, BienvenuActivity.class);
-                            intent.putExtra(employeScanne,employe);
-                            finish();
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(getApplicationContext(), "Veuillez refaire le scanne de votre tag", Toast.LENGTH_LONG).show();
+            showLoading(false);
+            Log.i(TAG," idJournée => "+idJournee);
+            if(idJournee != null){
+                pointageViewModel.getJourneeById(idJournee).observe(this, new Observer<Journee>() {
+                    @Override
+                    public void onChanged(Journee journee) {
+                        Log.i(TAG, "valeur => "+journee.getEtat() + " id => "+journee.getId());
+                        if(journee != null){
+                            Log.i(TAG, "journée => " + journee.getEtat() + " journée mac => " + journee.getMacNfc() + " id " + journee.getId());
+                            if(journee.getEtat() == 0){
+                                Intent intent = new Intent(MainActivity.this, ValiderJourneeActivity.class);
+                                Log.i(TAG, " journée mac => " + journee.getMacNfc() + " id " + journee.getId());
+                                intent.putExtra(JOURNEEE_IN_CARTE,journee);
+                                startActivity(intent);
+                                dismissLoading();
+                            }else{
+                                isEmployeHasMacNfc(macNfc);
+                            }
                         }
-
-                    }else{
-                        Intent intent = new Intent(MainActivity.this, AffectationNfcToEmployeActivity.class);
-                        intent.putExtra(ADDRESS_MAC_NFC, macNfc);
-                        finish();
-                        startActivity(intent);
                     }
-                    dismissLoading();
-                }
-            });
-
+                });
+            }else{
+                isEmployeHasMacNfc(macNfc);
+            }
+            idJournee = null;
         }
     }
 
@@ -181,6 +181,31 @@ public class MainActivity extends AbsctractBaseActivity {
         WriteModeOff();
     }
 
+    private void isEmployeHasMacNfc(String macNfc){
+        pointageViewModel.getEmployeByMacNfc(macNfc).observe(this, new Observer<Employe>() {
+            @Override
+            public void onChanged(Employe employe) {
+                if(employe != null){
+                    if(!employe.getEtatRequet().equals(Constante.ETAT_ERREUR_REQUET)){
+                        Log.i(TAG, "employe => "+employe.getNom());
+                        Intent intent = new Intent(MainActivity.this, BienvenuActivity.class);
+                        intent.putExtra(employeScanne,employe);
+                        finish();
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Veuillez refaire le scanne de votre tag", Toast.LENGTH_LONG).show();
+                    }
+
+                }else{
+                    Intent intent = new Intent(MainActivity.this, AffectationNfcToEmployeActivity.class);
+                    intent.putExtra(ADDRESS_MAC_NFC, macNfc);
+                    finish();
+                    startActivity(intent);
+                }
+                dismissLoading();
+            }
+        });
+    }
 
 
 }

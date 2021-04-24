@@ -3,7 +3,9 @@ package mg.itu.lazanomentsoa.pointagenfcitu.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tache {
+import java.io.Serializable;
+
+public class Tache implements Serializable {
     @SerializedName("_id")
     @Expose
     private String id;

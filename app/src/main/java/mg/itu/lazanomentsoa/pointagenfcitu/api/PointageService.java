@@ -1,8 +1,11 @@
 package mg.itu.lazanomentsoa.pointagenfcitu.api;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Journee;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.ReturSucces;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.UpdateMacEmploye;
@@ -29,5 +32,11 @@ public interface PointageService {
 
     @POST("journees/{idTache}")
     Call<ReturSucces> addJourneeByMacAndTache(@Path("idTache") String idTache, @Body UpdateMacEmploye updateMacEmploye);
+
+    @GET("journee/{idJournee}")
+    Call<Journee> getJourneeById(@Path("idJournee") String idJournee);
+
+    @PATCH("journee/{idJournee}")
+    Call<ReturSucces> valideJourneeById(@Path("idJournee") String idJournee);
 
 }

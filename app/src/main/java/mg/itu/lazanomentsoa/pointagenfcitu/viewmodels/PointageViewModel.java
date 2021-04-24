@@ -6,10 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.api.PointageRepository;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Journee;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.ReturSucces;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.UpdateMacEmploye;
@@ -33,6 +36,14 @@ public class PointageViewModel extends AndroidViewModel {
     // journée
     public LiveData<ReturSucces> addJourneeByMacAndTache(String idTache, UpdateMacEmploye updateMacEmploye){
         return pointageRepository.addJourneeByMadAndTache(idTache, updateMacEmploye);
+    }
+
+    public LiveData<Journee> getJourneeById(String idJournee){
+        return pointageRepository.getJourneeById(idJournee);
+    }
+
+    public LiveData<ReturSucces> validerJourneeById(String id){
+        return pointageRepository.validerJourneeById(id);
     }
 
     // employe

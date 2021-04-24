@@ -5,10 +5,13 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import mg.itu.lazanomentsoa.pointagenfcitu.commun.Constante;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Employe;
+import mg.itu.lazanomentsoa.pointagenfcitu.models.Journee;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.ReturSucces;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.Tache;
 import mg.itu.lazanomentsoa.pointagenfcitu.models.UpdateMacEmploye;
@@ -78,6 +81,42 @@ public class PointageRepository {
         return returSuccesMutableLiveData;
     }
 
+    public LiveData<Journee> getJourneeById(String idJournee){
+        MutableLiveData<Journee> journeeMutableLiveData = new MutableLiveData<>();
+        pointageService.getJourneeById(idJournee)
+                .enqueue(new Callback<Journee>() {
+                    @Override
+                    public void onResponse(Call<Journee> call, Response<Journee> response) {
+                        Log.i(TAG," journee => succes "+response.body().toString());
+                        journeeMutableLiveData.setValue(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Journee> call, Throwable t) {
+                        Log.i(TAG," journee => erreur "+t.getMessage());
+                        journeeMutableLiveData.setValue(null);
+                    }
+                });
+
+        return journeeMutableLiveData;
+    }
+
+    public LiveData<ReturSucces> validerJourneeById(String id){
+        MutableLiveData<ReturSucces> returSuccesMutableLiveData = new MutableLiveData<>();
+        pointageService.valideJourneeById(id)
+                .enqueue(new Callback<ReturSucces>() {
+                    @Override
+                    public void onResponse(Call<ReturSucces> call, Response<ReturSucces> response) {
+                        returSuccesMutableLiveData.setValue(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReturSucces> call, Throwable t) {
+                        returSuccesMutableLiveData.setValue(null);
+                    }
+                });
+        return returSuccesMutableLiveData;
+    }
 
     // employe
     public LiveData<Employe> getEmployeByMacNfc(String macNfc){
